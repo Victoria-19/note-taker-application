@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-
+var uniqid = require('uniqid');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -17,14 +17,16 @@ let allNotes = require('./db/db.json');
 // route to get all notes 
 
 app.get('/api/notes', (req, res) => {
-    res.json(allNotes.slice(1));
+    console.log(allNotes)
+    console.log(allNotes.slice(1))
+    res.json(allNotes);
 });
 
 // serve the home page 
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/notes.html'));
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, '/public/notes.html'));
+// });
 
 // serve note page 
 
@@ -34,9 +36,6 @@ app.get('/notes', (req, res) => {
 
 // catch all route to handle unknown paths 
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
-});
 
 // Function to create a new note 
 
@@ -45,21 +44,36 @@ function createNewNote(body, notesArray) {
     if (!Array.isArray(notesArray)) {
         notesArray = [];
     }
-    
-    if (notesArray.length === 0) {
-        notesArray.push(0);
-    }
-
-    body.id = notesArray[0];
-    notesArray[0]++;
+    console.log(newNote)
+    // if (notesArray.length === 0) {
+    //     notesArray.push(0);
+    // }
+newNote.id=uniqid()
+console.log(newNote)
+    // body.id = notesArray[0];
+    // notesArray[0]++;
 
     notesArray.push(newNote);
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
-        JSON.stringify(notesArray, null, 2)
+        JSON.stringify(notesArray)
     );
     return newNote;
 }
 
 //route to create new note 
 
+app.post('/api/notes', (req, res) => {
+    const newNote = createNewNote(req.body, allNotes);
+    res.json(newNote);
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+    });
+
+// start server
+
+app.listen(PORT, () => {
+    console.log(`API server now on port http://localhost:${PORT}`);
+});
