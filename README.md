@@ -30,7 +30,7 @@
    
   ## [Contributing](#table-of-contents)
     
- worked with 
+ worked with Tutor Juan Delgado 
   
   ## [Installation](#table-of-contents)
 
